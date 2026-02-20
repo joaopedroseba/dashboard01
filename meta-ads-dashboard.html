@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Meta Ads</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c26;
+    --border: #2a2a3a;
+    --meta-blue: #1877f2;
+    --meta-grad: linear-gradient(135deg, #1877f2, #42a5f5);
+    --accent: #00d4aa;
+    --accent2: #ff6b6b;
+    --accent3: #ffd166;
+    --text: #f0f0f8;
+    --muted: #7070a0;
+    --positive: #00d4aa;
+    --negative: #ff6b6b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 32px 40px;
+    background-image: radial-gradient(ellipse at 20% 0%, rgba(24,119,242,0.12) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 100%, rgba(0,212,170,0.08) 0%, transparent 50%);
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 16px; }
+
+  .meta-icon {
+    width: 48px; height: 48px;
+    background: var(--meta-grad);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 8px 24px rgba(24,119,242,0.4);
+  }
+
+  .header-titles h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px; font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .header-titles p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 2px;
+  }
+
+  .header-right { text-align: right; }
+
+  .client-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--text);
+  }
+
+  .period-badge {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 4px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    margin-top: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  /* KPI GRID */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 4px;
+  }
+
+  .kpi-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 22px 24px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.6s ease both;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+  }
+
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--meta-grad);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .kpi-card:hover::before { opacity: 1; }
+
+  .kpi-card.accent-green::before { background: linear-gradient(90deg, var(--accent), #00ffcc); }
+  .kpi-card.accent-red::before { background: linear-gradient(90deg, #ff6b6b, #ff9a9a); }
+  .kpi-card.accent-yellow::before { background: linear-gradient(90deg, #ffd166, #ffec9e); }
+
+  .kpi-icon {
+    font-size: 18px;
+    margin-bottom: 12px;
+    opacity: 0.8;
+  }
+
+  .kpi-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .kpi-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .kpi-delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 20px;
+  }
+
+  .delta-up {
+    color: var(--positive);
+    background: rgba(0,212,170,0.12);
+  }
+
+  .delta-down {
+    color: var(--negative);
+    background: rgba(255,107,107,0.12);
+  }
+
+  .kpi-sublabel {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* CHARTS ROW */
+  .charts-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 4px;
+  }
+
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .chart-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .chart-title span {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* BAR CHART */
+  .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; }
+
+  .bar-group { display: flex; flex-direction: column; align-items: center; flex: 1; }
+
+  .bar-wrap { width: 100%; display: flex; align-items: flex-end; height: 100px; gap: 3px; }
+
+  .bar {
+    flex: 1;
+    border-radius: 4px 4px 0 0;
+    transition: opacity 0.2s;
+    cursor: pointer;
+  }
+
+  .bar:hover { opacity: 0.7; }
+  .bar-label { font-size: 10px; color: var(--muted); margin-top: 6px; }
+
+  /* LINE CHART */
+  .line-svg { width: 100%; height: 130px; }
+
+  /* DONUT */
+  .donut-container { display: flex; align-items: center; gap: 24px; }
+  .donut-svg { flex-shrink: 0; }
+  .donut-legend { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-name { color: var(--muted); flex: 1; }
+  .legend-pct { font-weight: 600; font-size: 13px; }
+
+  /* FUNNEL */
+  .funnel { display: flex; flex-direction: column; gap: 8px; }
+  .funnel-step { display: flex; align-items: center; gap: 12px; }
+  .funnel-bar-bg { flex: 1; height: 32px; background: var(--surface2); border-radius: 6px; overflow: hidden; }
+  .funnel-bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 12px; font-size: 11px; font-weight: 600; transition: width 1s ease; }
+  .funnel-step-label { font-size: 11px; color: var(--muted); width: 90px; text-align: right; }
+  .funnel-step-value { font-size: 12px; font-weight: 600; width: 80px; }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    animation: fadeUp 0.6s ease both;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .kpi-card:nth-child(1) { animation-delay: 0.05s; }
+  .kpi-card:nth-child(2) { animation-delay: 0.10s; }
+  .kpi-card:nth-child(3) { animation-delay: 0.15s; }
+  .kpi-card:nth-child(4) { animation-delay: 0.20s; }
+
+  /* TOOLTIP */
+  .tooltip {
+    position: fixed;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+  }
+  .tooltip.visible { opacity: 1; }
+
+  @media (max-width: 900px) {
+    body { padding: 20px; }
+    .kpi-grid, .kpi-grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .charts-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOOLTIP -->
+<div class="tooltip" id="tooltip"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="meta-icon">𝕗</div>
+    <div class="header-titles">
+      <h1>Meta Ads Report</h1>
+      <p>Performance de Tráfego Pago · Facebook & Instagram</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <!-- ✏️ EDITE: Nome do cliente -->
+    <div class="client-name" id="clientName">Nome do Cliente</div>
+    <!-- ✏️ EDITE: Período -->
+    <div class="period-badge" id="period">01 Jan 2025 → 31 Jan 2025</div>
+  </div>
+</div>
+
+<!-- KPI ROW 1: Alcance & Engajamento -->
+<div class="section-label">📡 Alcance & Engajamento</div>
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-icon">👁️</div>
+    <div class="kpi-label">Impressões</div>
+    <!-- ✏️ EDITE os valores abaixo -->
+    <div class="kpi-value" id="impressions">842.5K</div>
+    <div class="kpi-delta delta-up">↑ 12.4%</div>
+    <div class="kpi-sublabel">vs. período anterior</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon">🎯</div>
+    <div class="kpi-label">Alcance</div>
+    <div class="kpi-value" id="reach">310.2K</div>
+    <div class="kpi-delta delta-up">↑ 8.1%</div>
+    <div class="kpi-sublabel">vs. período anterior</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon">🔁</div>
+    <div class="kpi-label">Frequência</div>
+    <div class="kpi-value" id="frequency">2.72x</div>
+    <div class="kpi-delta delta-up">↑ 0.3</div>
+    <div class="kpi-sublabel">média de exibições</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon">🖱️</div>
+    <div class="kpi-label">Cliques no Link</div>
+    <div class="kpi-value" id="clicks">18.4K</div>
+    <div class="kpi-delta delta-up">↑ 22.3%</div>
+    <div class="kpi-sublabel">vs. período anterior</div>
+  </div>
+</div>
+
+<!-- KPI ROW 2: Performance -->
+<div class="section-label">💸 Performance & Conversões</div>
+<div class="kpi-grid-2">
+  <div class="kpi-card accent-yellow">
+    <div class="kpi-icon">💰</div>
+    <div class="kpi-label">Investimento Total</div>
+    <div class="kpi-value" id="spend">R$ 4.820</div>
+    <div class="kpi-delta delta-up">↑ 5.0%</div>
+    <div class="kpi-sublabel">verba utilizada</div>
+  </div>
+  <div class="kpi-card accent-green">
+    <div class="kpi-icon">📈</div>
+    <div class="kpi-label">ROAS</div>
+    <div class="kpi-value" id="roas">6.4x</div>
+    <div class="kpi-delta delta-up">↑ 0.8x</div>
+    <div class="kpi-sublabel">retorno sobre investimento</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon">🛒</div>
+    <div class="kpi-label">Conversões</div>
+    <div class="kpi-value" id="conversions">247</div>
+    <div class="kpi-delta delta-up">↑ 18.6%</div>
+    <div class="kpi-sublabel">leads / vendas</div>
+  </div>
+  <div class="kpi-card accent-red">
+    <div class="kpi-icon">🎯</div>
+    <div class="kpi-label">CPL / CPA</div>
+    <div class="kpi-value" id="cpa">R$ 19,51</div>
+    <div class="kpi-delta delta-down">↓ 11.2%</div>
+    <div class="kpi-sublabel">custo por conversão</div>
+  </div>
+</div>
+
+<!-- CHARTS -->
+<div class="section-label">📊 Evolução do Período</div>
+<div class="charts-row">
+
+  <!-- INVESTIMENTO POR SEMANA -->
+  <div class="chart-card">
+    <div class="chart-title">
+      Investimento × Conversões por Semana
+      <span>barras = R$ · linha = conversões</span>
+    </div>
+    <div style="position:relative">
+      <svg class="line-svg" viewBox="0 0 400 130" id="weekChart">
+        <defs>
+          <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1877f2" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#1877f2" stop-opacity="0.3"/>
+          </linearGradient>
+          <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#00d4aa" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#00d4aa" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- Grid lines -->
+        <line x1="0" y1="25" x2="400" y2="25" stroke="#2a2a3a" stroke-width="1"/>
+        <line x1="0" y1="65" x2="400" y2="65" stroke="#2a2a3a" stroke-width="1"/>
+        <line x1="0" y1="105" x2="400" y2="105" stroke="#2a2a3a" stroke-width="1"/>
+
+        <!-- BARS: Investimento (semanas 1-4) -->
+        <!-- Valores em pixels (max bar = 80px height), base y=110 -->
+        <!-- Semana 1: R$1050 → 57px -->
+        <rect x="25" y="53" width="40" height="57" rx="4" fill="url(#barGrad)" opacity="0.85" class="bar-hover"
+              data-label="Semana 1" data-invest="R$ 1.050" data-conv="52"/>
+        <!-- Semana 2: R$1280 → 69px -->
+        <rect x="120" y="41" width="40" height="69" rx="4" fill="url(#barGrad)" opacity="0.85" class="bar-hover"
+              data-label="Semana 2" data-invest="R$ 1.280" data-conv="68"/>
+        <!-- Semana 3: R$1110 → 60px -->
+        <rect x="215" y="50" width="40" height="60" rx="4" fill="url(#barGrad)" opacity="0.85" class="bar-hover"
+              data-label="Semana 3" data-invest="R$ 1.110" data-conv="61"/>
+        <!-- Semana 4: R$1380 → 74px -->
+        <rect x="310" y="36" width="40" height="74" rx="4" fill="url(#barGrad)" opacity="0.85" class="bar-hover"
+              data-label="Semana 4" data-invest="R$ 1.380" data-conv="66"/>
+
+        <!-- LINE: Conversões -->
+        <!-- mapped: 52 → y=80, 68 → y=48, 61 → y=64, 66 → y=54 -->
+        <path d="M45,80 L140,48 L235,64 L330,54" fill="none" stroke="#00d4aa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M45,80 L140,48 L235,64 L330,54 L330,110 L45,110 Z" fill="url(#lineGrad)"/>
+        <!-- Dots -->
+        <circle cx="45" cy="80" r="5" fill="#00d4aa" stroke="#0a0a0f" stroke-width="2"/>
+        <circle cx="140" cy="48" r="5" fill="#00d4aa" stroke="#0a0a0f" stroke-width="2"/>
+        <circle cx="235" cy="64" r="5" fill="#00d4aa" stroke="#0a0a0f" stroke-width="2"/>
+        <circle cx="330" cy="54" r="5" fill="#00d4aa" stroke="#0a0a0f" stroke-width="2"/>
+
+        <!-- Labels semanas -->
+        <text x="45" y="125" text-anchor="middle" fill="#7070a0" font-size="10" font-family="DM Sans">Sem 1</text>
+        <text x="140" y="125" text-anchor="middle" fill="#7070a0" font-size="10" font-family="DM Sans">Sem 2</text>
+        <text x="235" y="125" text-anchor="middle" fill="#7070a0" font-size="10" font-family="DM Sans">Sem 3</text>
+        <text x="330" y="125" text-anchor="middle" fill="#7070a0" font-size="10" font-family="DM Sans">Sem 4</text>
+      </svg>
+
+      <!-- Legend -->
+      <div style="display:flex;gap:20px;margin-top:6px;font-size:11px;color:var(--muted)">
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="width:12px;height:12px;background:#1877f2;border-radius:3px"></div> Investimento
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="width:16px;height:3px;background:#00d4aa;border-radius:2px"></div> Conversões
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTR + CPL TRENDS -->
+  <div class="chart-card">
+    <div class="chart-title">
+      CTR × CPL — Evolução Semanal
+      <span>CTR % · CPL R$</span>
+    </div>
+    <svg viewBox="0 0 400 130" style="width:100%;height:130px">
+      <defs>
+        <linearGradient id="ctrGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ffd166" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="#ffd166" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <line x1="0" y1="25" x2="400" y2="25" stroke="#2a2a3a" stroke-width="1"/>
+      <line x1="0" y1="65" x2="400" y2="65" stroke="#2a2a3a" stroke-width="1"/>
+      <line x1="0" y1="105" x2="400" y2="105" stroke="#2a2a3a" stroke-width="1"/>
+
+      <!-- CTR LINE: 2.1%, 2.4%, 2.2%, 2.8% → y: 90, 70, 82, 50 -->
+      <path d="M45,90 L140,70 L235,82 L330,50" fill="none" stroke="#ffd166" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M45,90 L140,70 L235,82 L330,50 L330,110 L45,110 Z" fill="url(#ctrGrad)"/>
+      <circle cx="45" cy="90" r="5" fill="#ffd166" stroke="#0a0a0f" stroke-width="2"/>
+      <circle cx="140" cy="70" r="5" fill="#ffd166" stroke="#0a0a0f" stroke-width="2"/>
+      <circle cx="235" cy="82" r="5" fill="#ffd166" stroke="#0a0a0f" stroke-width="2"/>
+      <circle cx="330" cy="50" r="5" fill="#ffd166" stroke="#0a0a0f" stroke-width="2"/>
+      <!-- CTR labels -->
+      <text x="45" y="86" text-anchor="middle" fill="#ffd166" font-size="9" font-family="DM Sans">2.1%</text>
+      <text x="140" y="66" text-anchor="middle" fill="#ffd166" font-size="9" font-family="DM Sans">2.4%</text>
+      <text x="235" y="78" text-anchor="middle" fill="#ffd166" font-size="9" font-family="DM Sans">2.2%</text>
+      <text x="330" y="46" text-anchor="middle" fill="#ffd166" font-size="9" font-family="DM Sans">2.8%</text>
+
+      <!-- CPL LINE: R$22, R$20, R$19, R$17 → y: 40, 55, 65, 80 -->
+      <path d="M45,40 L140,55 L235,65 L330,80" fill="none" stroke="#ff6b6b" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="5,3"/>
+      <circle cx="45" cy="40" r="5" fill="#ff6b6b" stroke="#0a0a0f" stroke-width="2"/>
+      <circle cx="140" cy="55" r="5" fill="#ff6b6b" stroke="#0a0a0f" stroke-width="2"/>
+      <circle cx="235" cy="65" r="5" fill="#ff6b6b" stroke="#0a0a0f" stroke-width="2"/>
+      <circle cx="330" cy="80" r="5" fill="#ff6b6b" stroke="#0a0a0f" stroke-width="2"/>
+      <!-- CPL labels -->
+      <text x="45" y="36" text-anchor="middle" fill="#ff6b6b" font-size="9" font-family="DM Sans">R$22</text>
+      <text x="140" y="51" text-anchor="middle" fill="#ff6b6b" font-size="9" font-family="DM Sans">R$20</text>
+      <text x="235" y="61" text-anchor="middle" fill="#ff6b6b" font-size="9" font-family="DM Sans">R$19</text>
+      <text x="330" y="76" text-anchor="middle" fill="#ff6b6b" font-size="9" font-family="DM Sans">R$17</text>
+
+      <text x="45" y="125" text-anchor="middle" fill="#7070a0" font-size="10" font-family="DM Sans">Sem 1</text>
+      <text x="140" y="125" text-anchor="middle" fill="#7070a0" font-size="10" font-family="DM Sans">Sem 2</text>
+      <text x="235" y="125" text-anchor="middle" fill="#7070a0" font-size="10" font-family="DM Sans">Sem 3</text>
+      <text x="330" y="125" text-anchor="middle" fill="#7070a0" font-size="10" font-family="DM Sans">Sem 4</text>
+    </svg>
+    <div style="display:flex;gap:20px;margin-top:6px;font-size:11px;color:var(--muted)">
+      <div style="display:flex;align-items:center;gap:6px">
+        <div style="width:16px;height:3px;background:#ffd166;border-radius:2px"></div> CTR (%)
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div style="width:16px;height:3px;background:#ff6b6b;border-radius:2px;opacity:0.7"></div> CPL (R$) — meta: reduzir
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ROW 2 CHARTS -->
+<div class="charts-row" style="margin-top:16px">
+
+  <!-- FUNIL -->
+  <div class="chart-card">
+    <div class="chart-title">Funil de Performance</div>
+    <div class="funnel">
+      <div class="funnel-step">
+        <div class="funnel-step-label">Impressões</div>
+        <div class="funnel-bar-bg">
+          <div class="funnel-bar-fill" style="width:100%;background:linear-gradient(90deg,#1877f2,#42a5f5)">842.5K</div>
+        </div>
+        <div class="funnel-step-value" style="color:#1877f2">100%</div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-step-label">Alcance</div>
+        <div class="funnel-bar-bg">
+          <div class="funnel-bar-fill" style="width:73%;background:linear-gradient(90deg,#5e35b1,#7e57c2)">310.2K</div>
+        </div>
+        <div class="funnel-step-value" style="color:#7e57c2">36.8%</div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-step-label">Cliques</div>
+        <div class="funnel-bar-bg">
+          <div class="funnel-bar-fill" style="width:45%;background:linear-gradient(90deg,#ffd166,#ffe8a3)">18.4K</div>
+        </div>
+        <div class="funnel-step-value" style="color:#ffd166">2.18%</div>
+      </div>
+      <div class="funnel-step">
+        <div class="funnel-step-label">Conversões</div>
+        <div class="funnel-bar-bg">
+          <div class="funnel-bar-fill" style="width:20%;background:linear-gradient(90deg,#00d4aa,#00ffcc)">247</div>
+        </div>
+        <div class="funnel-step-value" style="color:#00d4aa">1.34%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DONUT: Distribuição por posicionamento -->
+  <div class="chart-card">
+    <div class="chart-title">Distribuição por Posicionamento</div>
+    <div class="donut-container">
+      <svg class="donut-svg" viewBox="0 0 120 120" width="120" height="120">
+        <!-- Feed Instagram: 42% → 263deg -->
+        <circle cx="60" cy="60" r="46" fill="none" stroke="#1877f2" stroke-width="16"
+          stroke-dasharray="121.4 288.58" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+        <!-- Stories: 28% → 100.8deg -->
+        <circle cx="60" cy="60" r="46" fill="none" stroke="#ffd166" stroke-width="16"
+          stroke-dasharray="80.9 288.58" stroke-dashoffset="-121.4" transform="rotate(-90 60 60)"/>
+        <!-- Feed Facebook: 18% → 64.8deg -->
+        <circle cx="60" cy="60" r="46" fill="none" stroke="#00d4aa" stroke-width="16"
+          stroke-dasharray="52.0 288.58" stroke-dashoffset="-202.3" transform="rotate(-90 60 60)"/>
+        <!-- Reels: 12% → 43.2deg -->
+        <circle cx="60" cy="60" r="46" fill="none" stroke="#ff6b6b" stroke-width="16"
+          stroke-dasharray="34.7 288.58" stroke-dashoffset="-254.3" transform="rotate(-90 60 60)"/>
+        <text x="60" y="56" text-anchor="middle" fill="#f0f0f8" font-size="13" font-weight="800" font-family="Syne">42%</text>
+        <text x="60" y="70" text-anchor="middle" fill="#7070a0" font-size="9" font-family="DM Sans">Instagram</text>
+      </svg>
+      <div class="donut-legend">
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#1877f2"></div>
+          <div class="legend-name">Instagram Feed</div>
+          <div class="legend-pct">42%</div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#ffd166"></div>
+          <div class="legend-name">Stories</div>
+          <div class="legend-pct">28%</div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#00d4aa"></div>
+          <div class="legend-name">Facebook Feed</div>
+          <div class="legend-pct">18%</div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#ff6b6b"></div>
+          <div class="legend-name">Reels</div>
+          <div class="legend-pct">12%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CRIATIVOS -->
+<div class="section-label">🎨 Criativos em Veiculação</div>
+<div class="creatives-grid" id="creativesGrid">
+
+  <!-- ✏️ EDITE: duplique/remova estes blocos para adicionar/remover criativos -->
+  <div class="creative-card">
+    <div class="creative-info">
+      <div class="creative-header">
+        <div class="creative-num">01</div>
+        <div>
+          <!-- ✏️ EDITE: nome do criativo -->
+          <div class="creative-name">Campanha Conversão — Produto X</div>
+          <div class="creative-type-badge">🎯 Conversão · Feed + Stories</div>
+        </div>
+      </div>
+      <div class="creative-stats">
+        <div class="cstat"><div class="cstat-val">4.2%</div><div class="cstat-lbl">CTR</div></div>
+        <div class="cstat"><div class="cstat-val">142</div><div class="cstat-lbl">Conversões</div></div>
+        <div class="cstat"><div class="cstat-val">R$16,20</div><div class="cstat-lbl">CPL</div></div>
+        <div class="cstat"><div class="cstat-val">R$2.300</div><div class="cstat-lbl">Investido</div></div>
+      </div>
+      <div class="creative-comment">💬 Melhor criativo do período — alto CTR e menor custo por lead. Recomendamos manter e escalar o orçamento.</div>
+    </div>
+  </div>
+
+  <div class="creative-card">
+    <div class="creative-info">
+      <div class="creative-header">
+        <div class="creative-num">02</div>
+        <div>
+          <div class="creative-name">Vídeo Institucional — Awareness</div>
+          <div class="creative-type-badge">📢 Alcance · Reels + Feed</div>
+        </div>
+      </div>
+      <div class="creative-stats">
+        <div class="cstat"><div class="cstat-val">1.8%</div><div class="cstat-lbl">CTR</div></div>
+        <div class="cstat"><div class="cstat-val">105</div><div class="cstat-lbl">Conversões</div></div>
+        <div class="cstat"><div class="cstat-val">R$24,00</div><div class="cstat-lbl">CPL</div></div>
+        <div class="cstat"><div class="cstat-val">R$2.520</div><div class="cstat-lbl">Investido</div></div>
+      </div>
+      <div class="creative-comment">💬 Bom alcance e frequência. CTR abaixo do criativo 1 — sugerimos testar nova chamada para ação no início do vídeo.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- RESUMO EXECUTIVO -->
+<div class="section-label">📝 Resumo Executivo</div>
+<div class="summary-card">
+  <div class="summary-header">
+    <div class="summary-title">Análise do Período</div>
+    <div class="summary-badge good">✅ Mês Positivo</div>
+    <!-- ✏️ Troque por "⚠️ Atenção" ou "🔴 Abaixo da Meta" conforme o resultado -->
+  </div>
+  <div class="summary-body">
+
+    <div class="summary-block highlight-green">
+      <div class="summary-block-icon">🚀</div>
+      <div>
+        <div class="summary-block-title">Performance Geral</div>
+        <!-- ✏️ EDITE: troque os valores pelas métricas reais do cliente -->
+        <div class="summary-block-text">As campanhas atingiram <strong>842.5 mil impressões</strong> com um alcance de <strong>310 mil pessoas únicas</strong>, mantendo frequência saudável de <strong>2,7x</strong>. O volume de cliques cresceu <strong>22%</strong> em relação ao período anterior, reflexo de criativos mais assertivos e segmentação refinada.</div>
+      </div>
+    </div>
+
+    <div class="summary-block highlight-blue">
+      <div class="summary-block-icon">💰</div>
+      <div>
+        <div class="summary-block-title">Eficiência do Investimento</div>
+        <div class="summary-block-text">Com um investimento de <strong>R$ 4.820</strong>, geramos <strong>247 conversões</strong> a um custo médio de <strong>R$ 19,51 por lead</strong> — uma redução de <strong>11%</strong> no CPL frente ao mês anterior. O ROAS de <strong>6,4x</strong> indica que para cada R$ 1 investido, o retorno foi de R$ 6,40, superando a meta estabelecida.</div>
+      </div>
+    </div>
+
+    <div class="summary-block highlight-yellow">
+      <div class="summary-block-icon">📌</div>
+      <div>
+        <div class="summary-block-title">Destaques e Pontos de Atenção</div>
+        <!-- ✏️ EDITE: personalize com observações específicas do cliente -->
+        <div class="summary-block-text">O <strong>Criativo 1</strong> (Conversão — Feed e Stories) se destacou com CTR de 4,2% e menor CPL do período. A semana 4 foi a de melhor resultado em conversões. Recomendamos aumentar o orçamento nos dias de maior engajamento (terça a quinta) e testar nova variação do Criativo 2 com CTA mais direto.</div>
+      </div>
+    </div>
+
+    <div class="summary-block highlight-purple">
+      <div class="summary-block-icon">🎯</div>
+      <div>
+        <div class="summary-block-title">Próximos Passos</div>
+        <div class="summary-block-text">Para o próximo período, sugerimos: <strong>(1)</strong> Escalar o orçamento do Criativo 1 em 20%; <strong>(2)</strong> Testar novo formato carrossel para o público de remarketing; <strong>(3)</strong> Ampliar segmentação de lookalike com base na lista de compradores; <strong>(4)</strong> Monitorar frequência — caso ultrapasse 3,5x, renovar os criativos.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  Gerado via Meta Ads · <span id="footerDate"></span> · Dados sujeitos à atualização
+</div>
+
+<style>
+  /* CRIATIVOS */
+  .creatives-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 4px;
+  }
+
+  .creative-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: fadeUp 0.6s ease both;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .creative-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+  }
+
+  .creative-info { padding: 22px 24px; flex: 1; }
+
+  .creative-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .creative-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px; font-weight: 800;
+    color: var(--meta-blue);
+    line-height: 1;
+    min-width: 28px;
+    opacity: 0.7;
+  }
+
+  .creative-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px; font-weight: 700;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+
+  .creative-type-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .creative-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .cstat {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+
+  .cstat-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px; font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .cstat-lbl { font-size: 10px; color: var(--muted); }
+
+  .creative-comment {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    padding: 10px 12px;
+    background: var(--surface2);
+    border-left: 3px solid var(--meta-blue);
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* RESUMO EXECUTIVO */
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 4px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .summary-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .summary-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px; font-weight: 700;
+  }
+
+  .summary-badge {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+  }
+
+  .summary-badge.good { background: rgba(0,212,170,0.15); color: var(--accent); border: 1px solid rgba(0,212,170,0.3); }
+  .summary-badge.warn { background: rgba(255,209,102,0.15); color: var(--accent3); border: 1px solid rgba(255,209,102,0.3); }
+  .summary-badge.bad  { background: rgba(255,107,107,0.15); color: var(--accent2); border: 1px solid rgba(255,107,107,0.3); }
+
+  .summary-body { padding: 20px 28px; display: flex; flex-direction: column; gap: 14px; }
+
+  .summary-block {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 16px 18px;
+    border-radius: 12px;
+    border-left: 3px solid transparent;
+  }
+
+  .highlight-green { background: rgba(0,212,170,0.07); border-left-color: var(--accent); }
+  .highlight-blue  { background: rgba(24,119,242,0.08); border-left-color: var(--meta-blue); }
+  .highlight-yellow{ background: rgba(255,209,102,0.07); border-left-color: var(--accent3); }
+  .highlight-purple{ background: rgba(94,53,177,0.08); border-left-color: #7e57c2; }
+
+  .summary-block-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+
+  .summary-block-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px; font-weight: 700;
+    margin-bottom: 5px;
+  }
+
+  .summary-block-text {
+    font-size: 13px;
+    color: #c0c0d8;
+    line-height: 1.7;
+  }
+
+  .summary-block-text strong { color: var(--text); font-weight: 600; }
+
+  @media (max-width: 900px) {
+    .creatives-grid { grid-template-columns: 1fr; }
+    .creative-stats { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+
+<script>
+  // Set footer date
+  document.getElementById('footerDate').textContent = new Date().toLocaleDateString('pt-BR', {day:'2-digit',month:'long',year:'numeric'});
+
+  // Tooltip for bar hover
+  const tooltip = document.getElementById('tooltip');
+  document.querySelectorAll('.bar-hover').forEach(el => {
+    el.style.cursor = 'pointer';
+    el.addEventListener('mouseenter', e => {
+      tooltip.innerHTML = `<b>${el.dataset.label}</b><br>Investimento: ${el.dataset.invest}<br>Conversões: ${el.dataset.conv}`;
+      tooltip.classList.add('visible');
+    });
+    el.addEventListener('mousemove', e => {
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top = (e.clientY - 10) + 'px';
+    });
+    el.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+  });
+</script>
+</body>
+</html>
